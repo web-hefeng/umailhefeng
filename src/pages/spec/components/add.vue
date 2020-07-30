@@ -117,12 +117,25 @@ export default {
     },
     // 添加属性规格=======================================
     add() {
+      if(!this.form.specsname){
+        warningAlert("商品名称不能为空")
+        return
+      }
+      
       //循环取到添加的属性
       for (var i = 0; i < this.dynamicValidateForm.domains.length; i++) {
         this.arr[i] = this.dynamicValidateForm.domains[i].value;
       }
+      if(this.arr ==""){
+        warningAlert("至少添加一个规格属性")
+        return
+      }
+
       //转换为接口需要的字符创
       this.form.attrs = JSON.stringify(this.arr);
+      console.log(this.form.attrs)
+
+      
       //发送添加请求
       requestspecAdd(this.form).then((res) => {
         if (res.data.code == 200) {

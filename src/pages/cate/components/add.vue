@@ -103,6 +103,10 @@ export default {
       }
     },
     add() {
+      if(!this.form.catename){
+        warningAlert("分类名称不能为空")
+        return
+      }
       requestcateAdd(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);

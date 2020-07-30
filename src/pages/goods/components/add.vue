@@ -1,7 +1,7 @@
 <template>
   <div class="add">
     <el-dialog :title="info.title" :visible.sync="info.show" @opened="createEditor">
-      <el-form :model="form">
+      <el-form :model="form" :rules="rules">
         <!-- 商品名称 -->
         <el-form-item label="一级分类" label-width="80px">
           <el-select v-model="form.first_cateid" @change="changeFirstCateId()">
@@ -30,10 +30,10 @@
         <el-form-item label="商品名称" label-width="80px">
           <el-input v-model="form.goodsname"></el-input>
         </el-form-item>
-        <el-form-item label="价格" label-width="80px">
+        <el-form-item label="价格" label-width="80px" prop="price">
           <el-input v-model="form.price"></el-input>
         </el-form-item>
-        <el-form-item label="市场价格" label-width="80px">
+        <el-form-item label="市场价格" label-width="80px" prop="market_price">
           <el-input v-model="form.market_price"></el-input>
         </el-form-item>
         <el-form-item label="图片" label-width="80px">
@@ -106,6 +106,14 @@ export default {
   props: ["info"],
   data() {
     return {
+      rules:{
+        price:[
+           { pattern:/^[0-9]*[1-9][0-9]*$/, message: "请输入数字", trigger: "blur" },
+        ],
+        market_price:[
+           { pattern:/^[0-9]*[1-9][0-9]*$/, message: "请输入数字", trigger: "blur" },
+        ]
+      },
       editor: null,
       secondCateArr: [],
       attrsArr: [],
@@ -191,8 +199,33 @@ export default {
     },
     // 添加属性规格=======================================
     add() {
+
+      
       this.form.description = this.editor.txt.html();
       this.form.specsattr = JSON.stringify(this.form.specsattr);
+
+      if(!this.form.first_cateid){
+        warningAlert("请选择一级分类")
+        return
+      }else if(!this.form.second_cateid){
+         warningAlert("请选择二级分类")
+        return
+      }else if(!this.form.goodsname){
+        warningAlert("商品名称不能为空")
+        return
+      } else if(this.form.price == 0){
+        warningAlert("价格不能为空")
+        return
+      } else if(this.form.market_price ==0){
+         warningAlert("价格不能为空")
+        return
+      }else if(!this.form.img){
+         warningAlert("请选择一张图片")
+        return
+      }else if(!this.form.specsid){
+          warningAlert("请选择商品规格")
+        return
+      }
       //发送添加请求
       requestGoodsAdd(this.form).then((res) => {
         if (res.data.code == 200) {

@@ -1,22 +1,38 @@
 <template>
   <div>
-   home
+    <div id="main" class="box"></div>
   </div>
 </template>
 
 <script>
+import echarts from "echarts";
 export default {
   components: {},
   props: {},
   data() {
-    return {
+    return {};
+  },
+  mounted() {
+    var myChart = echarts.init(document.getElementById("main"));
 
+    var option = {
+      xAxis: {
+        type: "category",
+        data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      },
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          type: "line",
+        },
+      ],
     };
+    myChart.setOption(option);
   },
-  mounted() {},
-  methods: {
-
-  },
+  methods: {},
   filter: {},
   computed: {},
   watch: {},
@@ -24,5 +40,9 @@ export default {
 </script>
 
 <style scoped>
-
+.box {
+  width: 80%;
+  height: 500px;
+  margin: 20px auto;
+}
 </style>

@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="菜单名称" label-width="80px">
-          <el-input v-model="form.title" autocomplete="off"  @blur="checkNum"></el-input>
+      <el-form :model="form" :rules="rules">
+        <el-form-item label="菜单名称" label-width="80px" prop="title">
+          <el-input v-model="form.title" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="上级菜单" label-width="80px">
           <el-select v-model="form.pid">
@@ -17,7 +17,7 @@
           <el-radio v-model="form.type" :label="1">目录</el-radio>
           <el-radio v-model="form.type" :label="2">菜单</el-radio>
         </el-form-item>
-        <el-form-item label="菜单图标" label-width="80px" v-if="form.type==1">
+        <el-form-item label="菜单图标" prop="logo" label-width="80px" v-if="form.type==1">
           <el-select v-model="form.icon">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option v-for="item in icons" :key="item" :label="item" :value="item"></el-option>
@@ -56,6 +56,18 @@ export default {
   props: ["info"],
   components: {},
   data() {
+    let checkAge = (rule, value, callback) => {
+      if (value.length == "") {
+        return callback(new Error("名称不能为空"));
+      } else {
+        callback();
+      }
+    };
+    let gobtn = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("名称不能为空"));
+      }
+    };
     return {
       form: {
         pid: 0,
@@ -64,6 +76,13 @@ export default {
         type: 1,
         url: "",
         status: 1,
+      },
+      rules: {
+        title: [
+          //  { required: true, message: '请输入菜单名称', trigger: 'blur' },
+          // { required: true, message: '请输入活动名称' },
+          { validator: checkAge, message: "菜单名称不能为空", trigger: "blur" },
+        ],
       },
       icons: [
         "el-icon-setting",
@@ -87,11 +106,11 @@ export default {
   },
   mounted() {},
   methods: {
-    checkNum() {
-      if (this.form.title != "") {
-        warningAlert("名称不能为空");
-      }
-    },
+    // checkNum() {
+    //   if (this.form.title != "") {
+    //     warningAlert("名称不能为空");
+    //   }
+    // },
     ...mapActions({
       requestList: "menu/requestList",
     }),
@@ -112,6 +131,13 @@ export default {
       }
     },
     add() {
+      if (!this.form.title) {
+        warningAlert("请输入菜单名称");
+        return;
+      } else if (!this.form.icon) {
+        warningAlert("请选中图标");
+        return;
+      }
       requestMonuAdd(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert(res.data.msg);

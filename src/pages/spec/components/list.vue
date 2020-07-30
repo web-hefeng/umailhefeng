@@ -36,7 +36,8 @@ export default {
     ...mapGetters({
       list: "spec/list",
       total:'spec/total',
-      size:'spec/size'
+      size:'spec/size',
+      page:"spec/page"
     }),
   },
   data() {

@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="角色名称" label-width="80px">
+      <el-form :model="form" :rules="rules">
+        <el-form-item label="角色名称" label-width="80px" prop="rolename">
           <el-input v-model="form.rolename" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="角色权限" label-width="80px">
@@ -41,6 +41,11 @@ export default {
   components: {},
   data() {
     return {
+      rules: {
+        rolename: [
+          { required: true, message: "请输入角色名称", trigger: "blur" },
+        ],
+      },
       form: {
         rolename: "",
         menus: "",
@@ -78,6 +83,14 @@ export default {
       this.$refs.tree.setCheckedKeys([]);
     },
     add() {
+      if (!this.form.rolename) {
+        warningAlert("请输入角色名称");
+        return;
+      } 
+      if (!this.form.menus) {
+        warningAlert("请至少选中一个权限");
+        return;
+      }
       this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
       //发起添加角色的请求
       requestRoleAdd(this.form).then((res) => {

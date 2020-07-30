@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog :title="info.title" :visible.sync="info.show">
-      <el-form :model="form">
+      <el-form :model="form" :rules="rules">
         <el-form-item label="所属角色" label-width="80px">
           <el-select v-model="form.roleid">
             <el-option label="--请选择--" value disabled></el-option>
@@ -14,10 +14,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="用户名" label-width="80px">
+        <el-form-item label="用户名" prop="username" label-width="80px">
           <el-input v-model="form.username"></el-input>
         </el-form-item>
-        <el-form-item label="密码" label-width="80px">
+        <el-form-item label="密码" prop="password" label-width="80px">
           <el-input v-model="form.password" show-password></el-input>
         </el-form-item>
         <el-form-item label="状态" label-width="80px">
@@ -46,6 +46,22 @@ export default {
   components: {},
   data() {
     return {
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 6, max: 11, message: "长度在 3 到 5 个字符", trigger: "blur" },
+        ],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          {
+            pattern: /^(?:\d+|[a-zA-Z]+|[!@#$%^&*]+)$/,
+            min: 6,
+            max: 11,
+            message: "请输入纯数字，纯字母，纯特殊字符",
+            trigger: "blur",
+          },
+        ],
+      },
       form: {
         roleid: "",
         username: "",
@@ -57,14 +73,14 @@ export default {
   mounted() {
     if (this.roleList.length === 0) {
       this.requestRoleList();
-      this.requestTotal()
+      this.requestTotal();
     }
   },
   methods: {
     ...mapActions({
       requestManageList: "manage/requestList",
       requestRoleList: "role/requestList",
-      requestTotal:"manage/requestTotal"
+      requestTotal: "manage/requestTotal",
     }),
     cancel() {
       this.info.show = false;
@@ -81,6 +97,16 @@ export default {
       };
     },
     add() {
+      if(!this.form.roleid){
+        warningAlert("请选择角色")
+        return
+      }else if(!this.form.username){
+        warningAlert("用户名不能为空")
+        return
+      }else if(!this.form.password){
+        warningAlert("密码不能为空")
+        return
+      }
       //发起添加角色的请求
       requestManageAdd(this.form).then((res) => {
         if (res.data.code == 200) {
@@ -88,7 +114,7 @@ export default {
           this.empty();
           this.cancel();
           this.requestManageList();
-          this.requestTotal()
+          this.requestTotal();
         } else {
           warningAlert(res.data.msg);
         }
@@ -117,7 +143,6 @@ export default {
   computed: {
     ...mapGetters({
       roleList: "role/list",
-
     }),
   },
   watch: {},

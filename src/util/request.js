@@ -4,8 +4,8 @@ import router from "../router"
 import store from "../store"
 import {warningAlert} from "./alert"
 axios.interceptors.response.use(res => {
-    // console.group("本次路径：" + res.config.url)
-    // console.log(res)
+    console.group("本次路径：" + res.config.url)
+    console.log(res)
     if (res.data.msg === "登录已过期或访问权限受限") {
         warningAlert("登录已过期或访问权限受限")
         router.push("/login");
@@ -21,7 +21,7 @@ axios.interceptors.request.use(config => {
 })
 
 const baseUrl = "/api"
-
+// const baseUrl = ""
 export const requestMonuAdd = (params) => {
     return axios({
         url: baseUrl + "/api/menuadd",

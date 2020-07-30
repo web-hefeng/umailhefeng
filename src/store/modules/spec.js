@@ -27,6 +27,7 @@ const actions = {
     //发送请求获取获取管理员;列表
     requestList(context, bool) {
         var params = {}
+        // console.log(bool)
         if (bool) {
             params = {}
         } else {
@@ -35,7 +36,9 @@ const actions = {
                 size: context.state.size
             }
         }
-        requestspecList({ params }).then(res => {
+        // console.log(params)
+        requestspecList(params).then(res => {
+            // console.log(res.data.list)
             if (res.data.list.length == 0 && context.state.page > 1) {
                 context.commit("changePage", context.state.page - 1);
                 context.dispatch("requestList")
@@ -66,6 +69,9 @@ const getters = {
     },
     size(state) {
         return state.size
+    },
+    page(state){
+        return state.page
     }
 }
 export default {
