@@ -20,8 +20,8 @@ axios.interceptors.request.use(config => {
     return config
 })
 
-const baseUrl = "/api"
-// const baseUrl = ""
+// const baseUrl = "/api"
+const baseUrl = ""
 export const requestMonuAdd = (params) => {
     return axios({
         url: baseUrl + "/api/menuadd",
